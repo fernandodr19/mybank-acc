@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  mybankacc_db:
+    container_name: mybankacc_db
+    image: postgres:13.2
+    ports:
+      - 5434:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data  
+    environment:
+      POSTGRES_DB: mybankacc
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  mybankacc_api:
+    container_name: mybankacc_api
+    network_mode: host
+    build: .
+    ports:
+      - 3001:3001
+    restart: always
+    environment:
+      DATABASE_HOST: mybankacc_db
+    depends_on:
+      - mybankacc_db
+
+volumes:
+  postgres-data:

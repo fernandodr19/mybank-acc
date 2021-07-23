@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option go_package = "github.com/fernandndo19/mybank-acc/gateway/grpc/accounts";
+
+message Request {
+    string accountID = 1;
+    sfixed64 amount = 2;
+}
+
+message Response {
+    bool success = 1;
+    sfixed32 errorCode = 2;
+    string errorDescription = 3 ;
+}
+
+service AccountsService {
+    rpc Deposit(Request) returns (Response) {}
+    rpc Withdrawal(Request) returns (Response) {}
+    rpc ReserveCreditLimit(Request) returns (Response) {}
+}

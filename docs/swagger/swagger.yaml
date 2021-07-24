@@ -1,5 +1,92 @@
+definitions:
+  accounts.CreateAccountRequest:
+    properties:
+      credit_limit:
+        type: integer
+      document_number:
+        type: string
+    type: object
+  accounts.CreateAccountResponse:
+    properties:
+      account_id:
+        type: string
+    type: object
+  accounts.GetAccountResponse:
+    properties:
+      account_id:
+        type: string
+      available_credit_limit:
+        type: integer
+      balance:
+        type: integer
+      created_at:
+        type: string
+      document_number:
+        type: string
+      updated_at:
+        type: string
+    type: object
 info:
   contact: {}
   license: {}
-paths: {}
+paths:
+  /accounts:
+    post:
+      consumes:
+      - application/json
+      description: Creates an bank account
+      parameters:
+      - description: Body
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/accounts.CreateAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/accounts.CreateAccountResponse'
+        "400":
+          description: Could not parse request
+        "409":
+          description: Account already registered
+        "422":
+          description: Could not create account
+        "500":
+          description: Internal server error
+      summary: Creates an account
+      tags:
+      - Accounts
+  /accounts/{account_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve an account by its ID
+      parameters:
+      - description: Account ID
+        in: path
+        name: account_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/accounts.GetAccountResponse'
+        "400":
+          description: Could not parse request
+        "404":
+          description: Account not found
+        "422":
+          description: Could not create account
+        "500":
+          description: Internal server error
+      summary: Gets an account
+      tags:
+      - Accounts
 swagger: "2.0"

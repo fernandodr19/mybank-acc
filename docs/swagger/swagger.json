@@ -4,5 +4,140 @@
         "contact": {},
         "license": {}
     },
-    "paths": {}
+    "paths": {
+        "/accounts": {
+            "post": {
+                "description": "Creates an bank account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Creates an account",
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/accounts.CreateAccountRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/accounts.CreateAccountResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Could not parse request"
+                    },
+                    "409": {
+                        "description": "Account already registered"
+                    },
+                    "422": {
+                        "description": "Could not create account"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/accounts/{account_id}": {
+            "get": {
+                "description": "Retrieve an account by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Gets an account",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Account ID",
+                        "name": "account_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/accounts.GetAccountResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Could not parse request"
+                    },
+                    "404": {
+                        "description": "Account not found"
+                    },
+                    "422": {
+                        "description": "Could not create account"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "accounts.CreateAccountRequest": {
+            "type": "object",
+            "properties": {
+                "credit_limit": {
+                    "type": "integer"
+                },
+                "document_number": {
+                    "type": "string"
+                }
+            }
+        },
+        "accounts.CreateAccountResponse": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "accounts.GetAccountResponse": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "type": "string"
+                },
+                "available_credit_limit": {
+                    "type": "integer"
+                },
+                "balance": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "document_number": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        }
+    }
 }

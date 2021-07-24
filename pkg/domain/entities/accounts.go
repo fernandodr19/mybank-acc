@@ -6,6 +6,7 @@ import (
 	"github.com/fernandodr19/mybank-acc/pkg/domain/vos"
 )
 
+// Account entity
 type Account struct {
 	ID              vos.AccountID
 	Document        vos.Document

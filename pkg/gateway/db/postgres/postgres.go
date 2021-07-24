@@ -1,30 +1,33 @@
 package postgres
 
 import (
+	"context"
 	"embed"
 	"fmt"
 	"net/http"
 
+	"github.com/fernandodr19/mybank-acc/pkg/config"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres" // needed to describe db driver
 	"github.com/golang-migrate/migrate/v4/source/httpfs"
+	"github.com/jackc/pgx/v4"
 )
 
 // NewConnection sets up a new connection with migrations
-// func NewConnection(ctx context.Context, cfg config.Postgres) (*pgx.Conn, error) {
-// 	// Maybe use connection pool later on..
-// 	conn, err := pgx.Connect(ctx, cfg.URL())
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func NewConnection(ctx context.Context, cfg config.Postgres) (*pgx.Conn, error) {
+	// Maybe use connection pool later on..
+	conn, err := pgx.Connect(ctx, cfg.URL())
+	if err != nil {
+		return nil, err
+	}
 
-// 	err = runMigrations(cfg.URL())
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	err = runMigrations(cfg.URL())
+	if err != nil {
+		return nil, err
+	}
 
-// 	return conn, nil
-// }
+	return conn, nil
+}
 
 //go:embed migrations
 var migrations embed.FS

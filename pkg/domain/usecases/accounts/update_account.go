@@ -50,7 +50,16 @@ func (u Usecase) Withdraw(ctx context.Context, accID vos.AccountID, amount vos.M
 		return ErrInvalidAmount
 	}
 
-	err := u.accRepo.Withdraw(ctx, accID, amount)
+	acc, err := u.GetAccountByID(ctx, accID)
+	if err != nil {
+		return domain.Error(operation, err)
+	}
+
+	if acc.Balance < amount {
+		return ErrInsufficientBalance
+	}
+
+	err = u.accRepo.Withdraw(ctx, accID, amount)
 
 	if err != nil {
 		return domain.Error(operation, err)
@@ -76,7 +85,16 @@ func (u Usecase) ReserveCreditLimit(ctx context.Context, accID vos.AccountID, am
 		return ErrInvalidAmount
 	}
 
-	err := u.accRepo.ReserveCreditLimit(ctx, accID, amount)
+	acc, err := u.GetAccountByID(ctx, accID)
+	if err != nil {
+		return domain.Error(operation, err)
+	}
+
+	if acc.Balance < amount {
+		return ErrInsufficientCredit
+	}
+
+	err = u.accRepo.DecreaseAvailableCredit(ctx, accID, amount)
 
 	if err != nil {
 		return domain.Error(operation, err)

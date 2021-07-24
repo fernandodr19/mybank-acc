@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/fernandodr19/mybank-acc/pkg/domain"
+	"github.com/fernandodr19/mybank-acc/pkg/domain/entities"
 	"github.com/fernandodr19/mybank-acc/pkg/domain/vos"
 	"github.com/fernandodr19/mybank-acc/pkg/instrumentation/logger"
 	"github.com/sirupsen/logrus"
@@ -23,7 +24,10 @@ func (u Usecase) CreateAccount(ctx context.Context, doc vos.Document) (vos.Accou
 		return "", ErrInvalidDocument
 	}
 
-	accID, err := u.accRepo.CreateAccount(ctx, doc)
+	// TODO change default
+	acc := entities.NewAccount(doc, 5000, 10000)
+
+	accID, err := u.accRepo.CreateAccount(ctx, acc)
 	if err != nil {
 		return "", domain.Error(operation, err)
 	}

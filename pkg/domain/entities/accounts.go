@@ -15,3 +15,11 @@ type Account struct {
 	CreatedAt       time.Time
 	UpdateAt        time.Time
 }
+
+func NewAccount(doc vos.Document, balance vos.Money, AvailableCredit vos.Money) Account {
+	return Account{
+		Document:        doc,
+		Balance:         balance,
+		AvailableCredit: AvailableCredit,
+	}
+}

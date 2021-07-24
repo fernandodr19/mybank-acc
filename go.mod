@@ -15,10 +15,12 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jackc/pgconn v1.9.0
 	github.com/jackc/pgx/v4 v4.12.0
+	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/swaggo/swag v1.6.7
+	github.com/testcontainers/testcontainers-go v0.11.1 // indirect
 	golang.org/x/net v0.0.0-20210716203947-853a461950ff // indirect
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	golang.org/x/tools v0.1.5 // indirect

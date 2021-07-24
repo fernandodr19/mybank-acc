@@ -9,10 +9,10 @@ import (
 
 // Repository of transactions
 type Repository interface {
-	CreateAccount(ctx context.Context, acc entities.Account) (vos.AccountID, error)
+	CreateAccount(ctx context.Context, doc vos.Document) (vos.AccountID, error)
 	GetAccountByID(ctx context.Context, accID vos.AccountID) (entities.Account, error)
 	Deposit(ctx context.Context, accID vos.AccountID, amount vos.Money) error
-	Withdrawal(ctx context.Context, accID vos.AccountID, amount vos.Money) error
+	Withdraw(ctx context.Context, accID vos.AccountID, amount vos.Money) error
 	ReserveCreditLimit(ctx context.Context, accID vos.AccountID, amount vos.Money) error
 }
 

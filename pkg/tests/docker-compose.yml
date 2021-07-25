@@ -2,7 +2,7 @@ version: '3'
 
 services:
   pg-test:
-    container_name: pg-test
+    container_name: pg-acc-test
     image: postgres:13.2
     ports:
       - 5435:5432

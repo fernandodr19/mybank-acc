@@ -32,7 +32,7 @@ func (h Handler) CreateAccount(r *http.Request) responses.Response {
 		return responses.BadRequest(domain.Error(operation, err), responses.ErrInvalidBody)
 	}
 
-	accID, err := h.Usecase.CreateAccount(ctx, body.Document)
+	accID, err := h.Usecase.CreateAccount(ctx, body.Document, body.CreditLimit)
 	if err != nil {
 		return responses.ErrorResponse(domain.Error(operation, err))
 	}

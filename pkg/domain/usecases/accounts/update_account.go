@@ -90,7 +90,7 @@ func (u Usecase) ReserveCreditLimit(ctx context.Context, accID vos.AccountID, am
 		return domain.Error(operation, err)
 	}
 
-	if acc.Balance < amount {
+	if acc.AvailableCredit < amount {
 		return ErrInsufficientCredit
 	}
 

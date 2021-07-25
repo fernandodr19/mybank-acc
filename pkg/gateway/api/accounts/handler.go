@@ -17,7 +17,7 @@ var _ Usecase = accounts.Usecase{}
 
 // Usecase of accoutns
 type Usecase interface {
-	CreateAccount(ctx context.Context, doc vos.Document) (vos.AccountID, error)
+	CreateAccount(ctx context.Context, doc vos.Document, creditLimit vos.Money) (vos.AccountID, error)
 	GetAccountByID(ctx context.Context, accID vos.AccountID) (entities.Account, error)
 }
 

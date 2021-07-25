@@ -11,7 +11,7 @@ import (
 )
 
 // CreateAccount creates an account
-func (u Usecase) CreateAccount(ctx context.Context, doc vos.Document) (vos.AccountID, error) {
+func (u Usecase) CreateAccount(ctx context.Context, doc vos.Document, creditLimit vos.Money) (vos.AccountID, error) {
 	const operation = "accounts.Usecase.CreateAccount"
 
 	log := logger.FromCtx(ctx).WithFields(logrus.Fields{
@@ -24,8 +24,7 @@ func (u Usecase) CreateAccount(ctx context.Context, doc vos.Document) (vos.Accou
 		return "", ErrInvalidDocument
 	}
 
-	// TODO change default
-	acc := entities.NewAccount(doc, 5000, 10000)
+	acc := entities.NewAccount(doc, 0, creditLimit)
 
 	accID, err := u.accRepo.CreateAccount(ctx, acc)
 	if err != nil {

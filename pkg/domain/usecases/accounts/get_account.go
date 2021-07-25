@@ -7,6 +7,7 @@ import (
 	"github.com/fernandodr19/mybank-acc/pkg/domain/entities"
 	"github.com/fernandodr19/mybank-acc/pkg/domain/vos"
 	"github.com/fernandodr19/mybank-acc/pkg/instrumentation/logger"
+
 	"github.com/sirupsen/logrus"
 )
 

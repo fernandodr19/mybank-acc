@@ -9,6 +9,7 @@ import (
 	"github.com/fernandodr19/mybank-acc/pkg/domain/vos"
 	"github.com/fernandodr19/mybank-acc/pkg/gateway/db/postgres/sqlc"
 	"github.com/jackc/pgx/v4"
+	pgx_errors "github.com/jackc/pgx/v4"
 )
 
 var _ accounts.Repository = &AccountsRepository{}
@@ -49,6 +50,9 @@ func (r AccountsRepository) GetAccountByID(ctx context.Context, accID vos.Accoun
 
 	rawAcc, err := r.q.GetAccountByID(ctx, accID.String())
 	if err != nil {
+		if err == pgx_errors.ErrNoRows {
+			return entities.Account{}, accounts.ErrAccountNotFound
+		}
 		return entities.Account{}, domain.Error(operation, err)
 	}
 

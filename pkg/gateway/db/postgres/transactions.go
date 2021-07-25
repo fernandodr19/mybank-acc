@@ -59,12 +59,15 @@ func (r AccountsRepository) GetAccountByID(ctx context.Context, accID vos.Accoun
 func (r AccountsRepository) Deposit(ctx context.Context, accID vos.AccountID, amount vos.Money) error {
 	const operation = "postgres.AccountsRepository.Deposit"
 
-	err := r.q.Deposit(ctx, sqlc.DepositParams{
+	rows, err := r.q.Deposit(ctx, sqlc.DepositParams{
 		ID:     accID.String(),
 		Amount: amount.Int64(),
 	})
 	if err != nil {
 		return domain.Error(operation, err)
+	}
+	if rows == 0 {
+		return accounts.ErrAccountNotFound
 	}
 
 	return nil
@@ -74,12 +77,15 @@ func (r AccountsRepository) Deposit(ctx context.Context, accID vos.AccountID, am
 func (r AccountsRepository) Withdraw(ctx context.Context, accID vos.AccountID, amount vos.Money) error {
 	const operation = "postgres.AccountsRepository.Withdraw"
 
-	err := r.q.Withdraw(ctx, sqlc.WithdrawParams{
+	rows, err := r.q.Withdraw(ctx, sqlc.WithdrawParams{
 		ID:     accID.String(),
 		Amount: amount.Int64(),
 	})
 	if err != nil {
 		return domain.Error(operation, err)
+	}
+	if rows == 0 {
+		return accounts.ErrAccountNotFound
 	}
 
 	return nil
@@ -89,12 +95,15 @@ func (r AccountsRepository) Withdraw(ctx context.Context, accID vos.AccountID, a
 func (r AccountsRepository) DecreaseAvailableCredit(ctx context.Context, accID vos.AccountID, amount vos.Money) error {
 	const operation = "postgres.AccountsRepository.DecreaseAvailableCredit"
 
-	err := r.q.DecreaseAvailableCredit(ctx, sqlc.DecreaseAvailableCreditParams{
+	rows, err := r.q.DecreaseAvailableCredit(ctx, sqlc.DecreaseAvailableCreditParams{
 		ID:     accID.String(),
 		Amount: amount.Int64(),
 	})
 	if err != nil {
 		return domain.Error(operation, err)
+	}
+	if rows == 0 {
+		return accounts.ErrAccountNotFound
 	}
 
 	return nil

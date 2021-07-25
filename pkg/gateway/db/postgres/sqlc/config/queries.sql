@@ -7,17 +7,17 @@ RETURNING id;
 SELECT * FROM accounts
 WHERE id = @id;
 
--- name: Deposit :exec
+-- name: Deposit :execrows
 UPDATE accounts
 SET balance = balance + @amount
 WHERE id = @id;
 
--- name: Withdraw :exec
+-- name: Withdraw :execrows
 UPDATE accounts
 SET balance = balance - @amount
 WHERE id = @id;
 
--- name: DecreaseAvailableCredit :exec
+-- name: DecreaseAvailableCredit :execrows
 UPDATE accounts
 SET available_credit = available_credit - @amount
 WHERE id = @id;

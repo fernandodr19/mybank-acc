@@ -26,7 +26,7 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (s
 	return id, err
 }
 
-const decreaseAvailableCredit = `-- name: DecreaseAvailableCredit :exec
+const decreaseAvailableCredit = `-- name: DecreaseAvailableCredit :execrows
 UPDATE accounts
 SET available_credit = available_credit - $1
 WHERE id = $2
@@ -37,12 +37,15 @@ type DecreaseAvailableCreditParams struct {
 	ID     string `json:"id"`
 }
 
-func (q *Queries) DecreaseAvailableCredit(ctx context.Context, arg DecreaseAvailableCreditParams) error {
-	_, err := q.db.Exec(ctx, decreaseAvailableCredit, arg.Amount, arg.ID)
-	return err
+func (q *Queries) DecreaseAvailableCredit(ctx context.Context, arg DecreaseAvailableCreditParams) (int64, error) {
+	result, err := q.db.Exec(ctx, decreaseAvailableCredit, arg.Amount, arg.ID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
-const deposit = `-- name: Deposit :exec
+const deposit = `-- name: Deposit :execrows
 UPDATE accounts
 SET balance = balance + $1
 WHERE id = $2
@@ -53,9 +56,12 @@ type DepositParams struct {
 	ID     string `json:"id"`
 }
 
-func (q *Queries) Deposit(ctx context.Context, arg DepositParams) error {
-	_, err := q.db.Exec(ctx, deposit, arg.Amount, arg.ID)
-	return err
+func (q *Queries) Deposit(ctx context.Context, arg DepositParams) (int64, error) {
+	result, err := q.db.Exec(ctx, deposit, arg.Amount, arg.ID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const getAccountByID = `-- name: GetAccountByID :one
@@ -77,7 +83,7 @@ func (q *Queries) GetAccountByID(ctx context.Context, id string) (Account, error
 	return i, err
 }
 
-const withdraw = `-- name: Withdraw :exec
+const withdraw = `-- name: Withdraw :execrows
 UPDATE accounts
 SET balance = balance - $1
 WHERE id = $2
@@ -88,7 +94,10 @@ type WithdrawParams struct {
 	ID     string `json:"id"`
 }
 
-func (q *Queries) Withdraw(ctx context.Context, arg WithdrawParams) error {
-	_, err := q.db.Exec(ctx, withdraw, arg.Amount, arg.ID)
-	return err
+func (q *Queries) Withdraw(ctx context.Context, arg WithdrawParams) (int64, error) {
+	result, err := q.db.Exec(ctx, withdraw, arg.Amount, arg.ID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }

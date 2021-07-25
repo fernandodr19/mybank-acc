@@ -10,7 +10,7 @@ import (
 	"github.com/fernandodr19/mybank-acc/pkg/config"
 	"github.com/fernandodr19/mybank-acc/pkg/gateway/api"
 	"github.com/fernandodr19/mybank-acc/pkg/gateway/db/postgres"
-	grpc_acc "github.com/fernandodr19/mybank-acc/pkg/gateway/gRPC"
+	grpc_acc "github.com/fernandodr19/mybank-acc/pkg/gateway/grpc"
 	"github.com/fernandodr19/mybank-acc/pkg/instrumentation/logger"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"

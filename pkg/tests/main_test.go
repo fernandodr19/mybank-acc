@@ -14,7 +14,7 @@ import (
 	"github.com/fernandodr19/mybank-acc/pkg/config"
 	"github.com/fernandodr19/mybank-acc/pkg/gateway/api"
 	"github.com/fernandodr19/mybank-acc/pkg/gateway/db/postgres"
-	acc_grpc "github.com/fernandodr19/mybank-acc/pkg/gateway/gRPC"
+	acc_grpc "github.com/fernandodr19/mybank-acc/pkg/gateway/grpc"
 	"github.com/fernandodr19/mybank-acc/pkg/instrumentation/logger"
 	"github.com/fernandodr19/mybank-acc/pkg/tests/clients"
 	"github.com/sirupsen/logrus"

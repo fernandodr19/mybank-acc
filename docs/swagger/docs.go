@@ -122,12 +122,17 @@ var doc = `{
     "definitions": {
         "accounts.CreateAccountRequest": {
             "type": "object",
+            "required": [
+                "document_number"
+            ],
             "properties": {
                 "credit_limit": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 15000
                 },
                 "document_number": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "12345678900"
                 }
             }
         },

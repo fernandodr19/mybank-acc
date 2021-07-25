@@ -44,8 +44,8 @@ func (h Handler) CreateAccount(r *http.Request) responses.Response {
 
 // CreateAccountRequest payload
 type CreateAccountRequest struct {
-	Document    vos.Document `json:"document_number"`
-	CreditLimit vos.Money    `json:"credit_limit"`
+	Document    vos.Document `json:"document_number" example:"12345678900" validate:"required"`
+	CreditLimit vos.Money    `json:"credit_limit" example:"15000"`
 }
 
 // CreateAccountResponse payload

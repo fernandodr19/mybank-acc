@@ -3,9 +3,13 @@ definitions:
   accounts.CreateAccountRequest:
     properties:
       credit_limit:
+        example: 15000
         type: integer
       document_number:
+        example: "12345678900"
         type: string
+    required:
+    - document_number
     type: object
   accounts.CreateAccountResponse:
     properties:

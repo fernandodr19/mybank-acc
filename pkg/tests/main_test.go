@@ -27,8 +27,7 @@ import (
 
 type _testEnv struct {
 	// Server
-	ApiServer  *httptest.Server
-	GrpcServer *acc_grpc.Server
+	Server *httptest.Server
 
 	// 3rd party fake Clients
 	GrpcFakeClient *clients.FakeClient
@@ -101,7 +100,7 @@ func setup() func() {
 	}
 	testEnv.GrpcFakeClient = clients.NewFakeAccountslient(clintGrpcConn)
 
-	testEnv.ApiServer = httptest.NewServer(apiHandler)
+	testEnv.Server = httptest.NewServer(apiHandler)
 
 	return func() {
 		clintGrpcConn.Close()

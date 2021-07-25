@@ -68,7 +68,7 @@ func Test_CreateAccount(t *testing.T) {
 				tt.Setup(t)
 			}
 
-			target := testEnv.ApiServer.URL + "/api/v1/accounts"
+			target := testEnv.Server.URL + "/api/v1/accounts"
 			body, err := json.Marshal(tt.Req)
 			require.NoError(t, err)
 
@@ -133,7 +133,7 @@ func Test_GetAccount(t *testing.T) {
 				tt.AccountID = tt.Setup(t)
 			}
 
-			path := testEnv.ApiServer.URL + "/api/v1/accounts"
+			path := testEnv.Server.URL + "/api/v1/accounts"
 			target := fmt.Sprintf("%s/%s", path, tt.AccountID)
 
 			req, err := http.NewRequest(http.MethodGet, target, nil)

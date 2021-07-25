@@ -13,6 +13,7 @@ This microservice handles requests through both gRPC and REST API. It creates an
 - [How to(s)](#make-yourself-at-home)
 - [API doc](#api-doc) 
 - [Project tree](#project-tree) 
+- [Database schema](#database-schema) 
 
 ----------------------------------
 
@@ -71,4 +72,22 @@ $ tree
 │   │   └── grpc # gRPC server infrastructure layer
 │   └── tests # integration tests and test helpers to be used within the project
 │       └── servers # fake servers for integration testing porpuses
+```
+### Database schema
+```
+                                 Table "public.accounts"
+      Column      |           Type           | Nullable |      Default       
+------------------+--------------------------+----------+--------------------
+ id               | uuid                     | not null | uuid_generate_v4()
+ document         | text                     | not null | 
+ balance          | bigint                   | not null | 0
+ available_credit | bigint                   | not null | 0
+ created_at       | timestamp with time zone | not null | CURRENT_TIMESTAMP
+ updated_at       | timestamp with time zone | not null | CURRENT_TIMESTAMP
+Indexes:
+    "accounts_pkey" PRIMARY KEY, btree (id)
+    "accounts_document_key" UNIQUE CONSTRAINT, btree (document)
+Triggers:
+    set_timestamp_accounts BEFORE UPDATE ON accounts FOR EACH ROW EXECUTE FUNCTION trigger_set_timestamp()
+
 ```

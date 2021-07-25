@@ -19,7 +19,7 @@ func BuildHandler(app *app.App) http.Handler {
 
 	r.PathPrefix("/metrics").Handler(promhttp.Handler()).Methods(http.MethodGet)
 	r.PathPrefix("/healthcheck").HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) }).Methods(http.MethodGet)
-	r.PathPrefix("/docs/v1/mybank/transactions/swagger").Handler(http_swagger.WrapHandler).Methods(http.MethodGet)
+	r.PathPrefix("/docs/v1/mybank/accounts/swagger").Handler(http_swagger.WrapHandler).Methods(http.MethodGet)
 
 	publicV1 := r.PathPrefix("/api/v1").Subrouter()
 	adminV1 := r.PathPrefix("/admin/v1").Subrouter()

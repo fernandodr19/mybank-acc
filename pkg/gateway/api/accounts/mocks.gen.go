@@ -16,7 +16,7 @@ import (
 //
 // 		// make and configure a mocked Usecase
 // 		mockedUsecase := &AccountsMockUsecase{
-// 			CreateAccountFunc: func(ctx context.Context, doc vos.Document) (vos.AccountID, error) {
+// 			CreateAccountFunc: func(ctx context.Context, doc vos.Document, creditLimit vos.Money) (vos.AccountID, error) {
 // 				panic("mock out the CreateAccount method")
 // 			},
 // 			GetAccountByIDFunc: func(ctx context.Context, accID vos.AccountID) (entities.Account, error) {
@@ -30,7 +30,7 @@ import (
 // 	}
 type AccountsMockUsecase struct {
 	// CreateAccountFunc mocks the CreateAccount method.
-	CreateAccountFunc func(ctx context.Context, doc vos.Document) (vos.AccountID, error)
+	CreateAccountFunc func(ctx context.Context, doc vos.Document, creditLimit vos.Money) (vos.AccountID, error)
 
 	// GetAccountByIDFunc mocks the GetAccountByID method.
 	GetAccountByIDFunc func(ctx context.Context, accID vos.AccountID) (entities.Account, error)
@@ -43,6 +43,8 @@ type AccountsMockUsecase struct {
 			Ctx context.Context
 			// Doc is the doc argument value.
 			Doc vos.Document
+			// CreditLimit is the creditLimit argument value.
+			CreditLimit vos.Money
 		}
 		// GetAccountByID holds details about calls to the GetAccountByID method.
 		GetAccountByID []struct {
@@ -57,13 +59,15 @@ type AccountsMockUsecase struct {
 }
 
 // CreateAccount calls CreateAccountFunc.
-func (mock *AccountsMockUsecase) CreateAccount(ctx context.Context, doc vos.Document) (vos.AccountID, error) {
+func (mock *AccountsMockUsecase) CreateAccount(ctx context.Context, doc vos.Document, creditLimit vos.Money) (vos.AccountID, error) {
 	callInfo := struct {
-		Ctx context.Context
-		Doc vos.Document
+		Ctx         context.Context
+		Doc         vos.Document
+		CreditLimit vos.Money
 	}{
-		Ctx: ctx,
-		Doc: doc,
+		Ctx:         ctx,
+		Doc:         doc,
+		CreditLimit: creditLimit,
 	}
 	mock.lockCreateAccount.Lock()
 	mock.calls.CreateAccount = append(mock.calls.CreateAccount, callInfo)
@@ -75,19 +79,21 @@ func (mock *AccountsMockUsecase) CreateAccount(ctx context.Context, doc vos.Docu
 		)
 		return accountIDOut, errOut
 	}
-	return mock.CreateAccountFunc(ctx, doc)
+	return mock.CreateAccountFunc(ctx, doc, creditLimit)
 }
 
 // CreateAccountCalls gets all the calls that were made to CreateAccount.
 // Check the length with:
 //     len(mockedUsecase.CreateAccountCalls())
 func (mock *AccountsMockUsecase) CreateAccountCalls() []struct {
-	Ctx context.Context
-	Doc vos.Document
+	Ctx         context.Context
+	Doc         vos.Document
+	CreditLimit vos.Money
 } {
 	var calls []struct {
-		Ctx context.Context
-		Doc vos.Document
+		Ctx         context.Context
+		Doc         vos.Document
+		CreditLimit vos.Money
 	}
 	mock.lockCreateAccount.RLock()
 	calls = mock.calls.CreateAccount

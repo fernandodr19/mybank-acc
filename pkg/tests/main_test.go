@@ -3,6 +3,8 @@ package tests
 import (
 	"context"
 	"fmt"
+	"net"
+	"net/http/httptest"
 	"os"
 	"os/exec"
 	"strings"
@@ -10,15 +12,33 @@ import (
 	"time"
 
 	"github.com/fernandodr19/mybank-acc/pkg/config"
+	"github.com/fernandodr19/mybank-acc/pkg/domain/usecases/accounts"
+	"github.com/fernandodr19/mybank-acc/pkg/domain/vos"
+	"github.com/fernandodr19/mybank-acc/pkg/gateway/api"
 	"github.com/fernandodr19/mybank-acc/pkg/gateway/db/postgres"
+	acc_grpc "github.com/fernandodr19/mybank-acc/pkg/gateway/gRPC"
 	"github.com/fernandodr19/mybank-acc/pkg/instrumentation/logger"
+	"github.com/fernandodr19/mybank-acc/pkg/tests/clients"
+	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc"
+
+	app "github.com/fernandodr19/mybank-acc/pkg"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4"
 	"github.com/testcontainers/testcontainers-go"
 )
 
 type _testEnv struct {
-	Conn *pgx.Conn
+	// Server
+	ApiServer  *httptest.Server
+	GrpcServer *acc_grpc.Server
+
+	// 3rd party fake Clients
+	GrpcFakeClient *clients.FakeClient
+
+	// DB
+	Conn    *pgx.Conn
+	AccRepo *postgres.AccountsRepository
 }
 
 var testEnv _testEnv
@@ -31,8 +51,65 @@ func TestMain(m *testing.M) {
 }
 
 func setup() func() {
+	log := logger.Default()
+	log.Info("setting up integration tests env")
 
-	return func() {}
+	// Load config
+	cfg, err := config.Load()
+	if err != nil {
+		log.WithError(err).Fatal("failed loading config")
+	}
+
+	err = setupDockerTest()
+	if err != nil {
+		log.WithError(err).Fatal("failed setting up docker")
+	}
+
+	// Setup postgres
+	cfg.Postgres.DBName = "test"
+	cfg.Postgres.Port = "5435"
+	dbConn, err := setupPostgresTest(cfg.Postgres)
+	if err != nil {
+		log.WithError(err).Fatal("failed setting up postgres")
+	}
+
+	testEnv.Conn = dbConn
+	testEnv.AccRepo = postgres.NewAccountsRepository(dbConn)
+
+	app, err := app.BuildApp(dbConn)
+	if err != nil {
+		log.WithError(err).Fatal("failed setting up app")
+	}
+
+	apiHandler, err := api.BuildHandler(app, cfg)
+	if err != nil {
+		log.WithError(err).Fatal("failed setting up app")
+	}
+
+	lis, err := net.Listen(cfg.GRPC.Protocol, cfg.GRPC.Address())
+	if err != nil {
+		log.Fatalf("Failed to listen on port 9000: %v", err)
+	}
+
+	grpcServer := acc_grpc.BuildHandler(app)
+	go func() {
+		if err := grpcServer.Serve(lis); err != nil {
+			log.WithError(err).Fatalf("Failed to serve gRPC server")
+		}
+	}()
+
+	// Fake gRPC client
+	clintGrpcConn, err := grpc.Dial(cfg.GRPC.Address(), grpc.WithInsecure())
+	if err != nil {
+		log.WithError(err).Fatalln("failed connecting grpc")
+	}
+	testEnv.GrpcFakeClient = clients.NewFakeAccountslient(clintGrpcConn)
+
+	testEnv.ApiServer = httptest.NewServer(apiHandler)
+
+	return func() {
+		clintGrpcConn.Close()
+	}
 }
 
 func setupDockerTest() error {
@@ -113,4 +190,36 @@ func truncatePostgresTables() {
 			accounts
 		CASCADE`,
 	)
+}
+
+func Test_(t *testing.T) {
+	testTable := []struct {
+		Name          string
+		AccID         vos.AccountID
+		Amount        vos.Money
+		Setup         func()
+		ExpectedError error
+	}{
+		{
+			Name:          "expected invalid amount",
+			AccID:         "e031a99d-6191-4d02-8616-b5e3530caccb",
+			Amount:        -10,
+			ExpectedError: accounts.ErrInvalidAmount,
+		},
+		{
+			Name:          "expected invalid acc id",
+			AccID:         "24dde2d4-5763-419d-9a93-3365ef55255c",
+			Amount:        10,
+			ExpectedError: accounts.ErrAccountNotFound,
+		},
+	}
+
+	ctx := context.Background()
+
+	for _, tt := range testTable {
+		t.Run(tt.Name, func(t *testing.T) {
+			err := testEnv.GrpcFakeClient.Deposit(ctx, tt.AccID, tt.Amount)
+			assert.ErrorIs(t, tt.ExpectedError, err)
+		})
+	}
 }

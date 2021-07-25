@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_CreateAccount(t *testing.T) {
+func Test_CreateAccount_DB(t *testing.T) {
 	testTable := []struct {
 		Name            string
 		Document        vos.Document

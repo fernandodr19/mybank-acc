@@ -26,8 +26,11 @@ func (u Usecase) CreateAccount(ctx context.Context, doc vos.Document, creditLimi
 		return "", ErrInvalidDocument
 	}
 
-	acc := entities.NewAccount(doc, 0, creditLimit)
+	if creditLimit < 0 {
+		return "", ErrInvalidCreditLimit
+	}
 
+	acc := entities.NewAccount(doc, 0, creditLimit)
 	accID, err := u.accRepo.CreateAccount(ctx, acc)
 	if err != nil {
 		return "", domain.Error(operation, err)

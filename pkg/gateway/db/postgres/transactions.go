@@ -8,6 +8,7 @@ import (
 	"github.com/fernandodr19/mybank-acc/pkg/domain/usecases/accounts"
 	"github.com/fernandodr19/mybank-acc/pkg/domain/vos"
 	"github.com/fernandodr19/mybank-acc/pkg/gateway/db/postgres/sqlc"
+	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
 	pgx_errors "github.com/jackc/pgx/v4"
 )
@@ -38,6 +39,11 @@ func (r AccountsRepository) CreateAccount(ctx context.Context, acc entities.Acco
 		AvailableCredit: acc.AvailableCredit.Int64(),
 	})
 	if err != nil {
+		if pgerr, ok := err.(*pgconn.PgError); ok {
+			if pgerr.ConstraintName == "accounts_document_key" {
+				return "", accounts.ErrAccountConflict
+			}
+		}
 		return "", domain.Error(operation, err)
 	}
 

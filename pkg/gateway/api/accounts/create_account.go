@@ -28,7 +28,7 @@ func (h Handler) CreateAccount(r *http.Request) responses.Response {
 	ctx := r.Context()
 	var body CreateAccountRequest
 	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
+	if err != nil || body.Document == "" {
 		return responses.BadRequest(domain.Error(operation, err), responses.ErrInvalidBody)
 	}
 

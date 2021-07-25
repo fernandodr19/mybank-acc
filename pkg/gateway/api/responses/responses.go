@@ -52,10 +52,12 @@ var (
 // accounts
 var (
 	ErrAccountNotFound     = ErrorPayload{Error: Error{Code: "error:account_not_found", Description: "Account not found"}}
+	ErrAccountConflict     = ErrorPayload{Error: Error{Code: "error:account_already_registered", Description: "Account already registered"}}
 	ErrInsufficientBalance = ErrorPayload{Error: Error{Code: "error:insufficient_balance", Description: "Insufficient balance"}}
 	ErrInsufficientCredit  = ErrorPayload{Error: Error{Code: "error:insufficient_credit", Description: "Insufficient credit"}}
 	ErrInvalidAccID        = ErrorPayload{Error: Error{Code: "error:invalid_account_id", Description: "Account id must be a UUIDv4"}}
 	ErrInvalidAmount       = ErrorPayload{Error: Error{Code: "error:invalid_amount", Description: "Amount must be greater than 0"}}
+	ErrInvalidCreditLimit  = ErrorPayload{Error: Error{Code: "error:invalid_credit_limit", Description: "Credit limit must be greater than 0"}}
 	ErrInvalidDocument     = ErrorPayload{Error: Error{Code: "error:invalid_document", Description: "Invalid document"}}
 )
 
@@ -64,6 +66,10 @@ func ErrorResponse(err error) Response {
 	switch {
 	case errors.Is(err, accounts.ErrInvalidDocument):
 		return UnprocessableEntity(err, ErrInvalidDocument)
+	case errors.Is(err, accounts.ErrInvalidCreditLimit):
+		return UnprocessableEntity(err, ErrInvalidCreditLimit)
+	case errors.Is(err, accounts.ErrAccountConflict):
+		return Conflict(err, ErrAccountConflict)
 	case errors.Is(err, accounts.ErrInvalidAmount):
 		return UnprocessableEntity(err, ErrInvalidAmount)
 	case errors.Is(err, accounts.ErrInsufficientBalance):

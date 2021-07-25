@@ -71,7 +71,7 @@ $ tree
 │   │   ├── db   # database infrastructure layer
 │   │   └── grpc # gRPC server infrastructure layer
 │   └── tests # integration tests and test helpers to be used within the project
-│       └── servers # fake servers for integration testing porpuses
+│       └── clients # fake clients for integration testing porpuses
 ```
 ### Database schema
 ```

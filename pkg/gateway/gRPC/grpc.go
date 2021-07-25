@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	app "github.com/fernandodr19/mybank-acc/pkg"
 	usecase "github.com/fernandodr19/mybank-acc/pkg/domain/usecases/accounts"
 	"github.com/fernandodr19/mybank-acc/pkg/domain/vos"
 	"github.com/fernandodr19/mybank-acc/pkg/gateway/grpc/accounts"
@@ -27,9 +28,9 @@ type Server struct {
 }
 
 // BuildHandler builds grpc handler
-func BuildHandler(accUsecase Usecase) *grpc.Server {
+func BuildHandler(app *app.App) *grpc.Server {
 	s := Server{
-		Usecase: accUsecase,
+		Usecase: app.Accounts,
 	}
 	grpcServer := grpc.NewServer()
 	accounts.RegisterAccountsServiceServer(grpcServer, &s)
@@ -39,19 +40,28 @@ func BuildHandler(accUsecase Usecase) *grpc.Server {
 // Deposit handles deposit requests
 func (s *Server) Deposit(ctx context.Context, req *accounts.Request) (*accounts.Response, error) {
 	err := s.Usecase.Deposit(ctx, vos.AccountID(req.AccountID), vos.Money(req.Amount))
-	return &accounts.Response{}, errorResponse(ctx, err)
+	if err != nil {
+		return &accounts.Response{}, errorResponse(ctx, err)
+	}
+	return &accounts.Response{}, nil
 }
 
 // Withdrawal handles withdrawals requests
 func (s *Server) Withdrawal(ctx context.Context, req *accounts.Request) (*accounts.Response, error) {
 	err := s.Usecase.Withdraw(ctx, vos.AccountID(req.AccountID), vos.Money(req.Amount))
-	return &accounts.Response{}, errorResponse(ctx, err)
+	if err != nil {
+		return &accounts.Response{}, errorResponse(ctx, err)
+	}
+	return &accounts.Response{}, nil
 }
 
 // ReserveCreditLimit handles reserve credit limit requests
 func (s *Server) ReserveCreditLimit(ctx context.Context, req *accounts.Request) (*accounts.Response, error) {
 	err := s.Usecase.ReserveCreditLimit(ctx, vos.AccountID(req.AccountID), vos.Money(req.Amount))
-	return &accounts.Response{}, errorResponse(ctx, err)
+	if err != nil {
+		return &accounts.Response{}, errorResponse(ctx, err)
+	}
+	return &accounts.Response{}, nil
 }
 
 var (

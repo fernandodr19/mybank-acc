@@ -86,7 +86,7 @@ func (q *Queries) GetAccountByID(ctx context.Context, id string) (Account, error
 const withdraw = `-- name: Withdraw :execrows
 UPDATE accounts
 SET balance = balance - $1
-WHERE id = $2
+WHERE id = $2 AND (balance >= $1)
 `
 
 type WithdrawParams struct {

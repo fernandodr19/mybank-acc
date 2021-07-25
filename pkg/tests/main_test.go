@@ -83,7 +83,7 @@ func setup() func() {
 
 	testEnv.App = app
 
-	apiHandler, err := api.BuildHandler(app, cfg)
+	apiHandler, err := api.BuildHandler(app)
 	if err != nil {
 		log.WithError(err).Fatal("failed setting up app")
 	}

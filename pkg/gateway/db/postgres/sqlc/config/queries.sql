@@ -15,7 +15,7 @@ WHERE id = @id;
 -- name: Withdraw :execrows
 UPDATE accounts
 SET balance = balance - @amount
-WHERE id = @id;
+WHERE id = @id AND (balance >= @amount);
 
 -- name: DecreaseAvailableCredit :execrows
 UPDATE accounts

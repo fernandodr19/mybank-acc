@@ -95,7 +95,7 @@ func (r AccountsRepository) Withdraw(ctx context.Context, accID vos.AccountID, a
 		return domain.Error(operation, err)
 	}
 	if rows == 0 {
-		return accounts.ErrAccountNotFound
+		return accounts.ErrInsufficientBalance
 	}
 
 	return nil

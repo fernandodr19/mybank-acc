@@ -35,10 +35,7 @@ func main() {
 	}
 
 	// Build app
-	app, err := app.BuildApp(dbConn)
-	if err != nil {
-		log.WithError(err).Fatalln("failed to build app")
-	}
+	app := app.BuildApp(dbConn)
 
 	// Build gRPC handler
 	grpcHandler := grpc_acc.BuildHandler(app)

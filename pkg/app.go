@@ -13,9 +13,9 @@ type App struct {
 }
 
 // BuildApp builds application struct with its necessary usecases
-func BuildApp(dbConn *pgx.Conn) (*App, error) {
+func BuildApp(dbConn *pgx.Conn) *App {
 	accRepo := postgres.NewAccountsRepository(dbConn)
 	return &App{
 		Accounts: accounts.NewUsecase(accRepo),
-	}, nil
+	}
 }

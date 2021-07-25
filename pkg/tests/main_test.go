@@ -76,17 +76,11 @@ func setup() func() {
 	testEnv.Conn = dbConn
 	testEnv.AccRepo = postgres.NewAccountsRepository(dbConn)
 
-	app, err := app.BuildApp(dbConn)
-	if err != nil {
-		log.WithError(err).Fatal("failed setting up app")
-	}
+	app := app.BuildApp(dbConn)
 
 	testEnv.App = app
 
-	apiHandler, err := api.BuildHandler(app)
-	if err != nil {
-		log.WithError(err).Fatal("failed setting up app")
-	}
+	apiHandler := api.BuildHandler(app)
 
 	lis, err := net.Listen(cfg.GRPC.Protocol, cfg.GRPC.Address())
 	if err != nil {

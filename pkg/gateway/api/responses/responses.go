@@ -70,6 +70,8 @@ func ErrorResponse(err error) Response {
 		return UnprocessableEntity(err, ErrInvalidCreditLimit)
 	case errors.Is(err, accounts.ErrAccountConflict):
 		return Conflict(err, ErrAccountConflict)
+	case errors.Is(err, accounts.ErrAccountNotFound):
+		return NotFound(err, ErrAccountNotFound)
 	case errors.Is(err, accounts.ErrInvalidAmount):
 		return UnprocessableEntity(err, ErrInvalidAmount)
 	case errors.Is(err, accounts.ErrInsufficientBalance):

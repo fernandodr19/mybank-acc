@@ -28,7 +28,8 @@ func (a API) Address() string {
 }
 
 type GRPC struct {
-	Port string `envconfig:"GRPC_PORT" default:"9000"`
+	Protocol string `envconfig:"GRPC_PROTOCOL" default:"tcp"`
+	Port     string `envconfig:"GRPC_PORT" default:"9000"`
 }
 
 // Address returns GRPC address

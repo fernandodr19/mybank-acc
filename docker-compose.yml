@@ -21,7 +21,7 @@ services:
       - 3001:3001
     restart: always
     environment:
-      DATABASE_HOST: mybankacc_db
+      DATABASE_NAME: mybankacc
     depends_on:
       - mybankacc_db
 

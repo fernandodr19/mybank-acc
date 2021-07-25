@@ -18,7 +18,7 @@ type Config struct {
 
 // API defines api configuration
 type API struct {
-	Port            string        `envconfig:"API_PORT" default:"3000"`
+	Port            string        `envconfig:"API_PORT" default:"3001"`
 	ShutdownTimeout time.Duration `envconfig:"API_SHUTDOWN_TIMEOUT" default:"5s"`
 }
 
@@ -38,7 +38,7 @@ func (g GRPC) Address() string {
 }
 
 type Swagger struct {
-	Host string `envconfig:"SWAGGER_HOST" default:"0.0.0.0:3000"`
+	Host string `envconfig:"SWAGGER_HOST" default:"0.0.0.0:3001"`
 }
 
 // Postgres defines postgres configuration

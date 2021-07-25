@@ -10,6 +10,6 @@ COPY . .
 
 RUN go build -o app ./cmd/api/*
 
-EXPOSE 3000
+EXPOSE 3001
 
 CMD ["./app"]

@@ -17,6 +17,7 @@ import (
 	acc_grpc "github.com/fernandodr19/mybank-acc/pkg/gateway/gRPC"
 	"github.com/fernandodr19/mybank-acc/pkg/instrumentation/logger"
 	"github.com/fernandodr19/mybank-acc/pkg/tests/clients"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
 	app "github.com/fernandodr19/mybank-acc/pkg"
@@ -81,16 +82,20 @@ func setup() func() {
 
 	apiHandler := api.BuildHandler(app)
 
-	lis, err := net.Listen(cfg.GRPC.Protocol, cfg.GRPC.Address())
-	if err != nil {
-		log.Fatalf("Failed to listen on port 9000: %v", err)
-	}
-
+	// gRPC server
 	grpcServer := acc_grpc.BuildHandler(app)
 	go func() {
-		if err := grpcServer.Serve(lis); err != nil {
-			log.WithError(err).Fatalf("Failed to serve gRPC server")
+		protocol, address := cfg.GRPC.Protocol, cfg.GRPC.Address()
+		l, err := net.Listen(protocol, address)
+		if err != nil {
+			log.WithFields(logrus.Fields{
+				"protocol": protocol,
+				"address":  address,
+			}).WithError(err).Fatalln("failed to listen gRPC")
 		}
+
+		log.WithField("address", address).Infoln("gRPC server starting...")
+		log.Fatal(grpcServer.Serve(l))
 	}()
 
 	// Fake gRPC client

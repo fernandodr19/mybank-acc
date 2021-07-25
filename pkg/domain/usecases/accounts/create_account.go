@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/fernandodr19/mybank-acc/pkg/domain"
 	"github.com/fernandodr19/mybank-acc/pkg/domain/entities"
@@ -20,7 +21,8 @@ func (u Usecase) CreateAccount(ctx context.Context, doc vos.Document, creditLimi
 
 	log.Infoln("creating account")
 
-	if doc == "" {
+	_, err := strconv.Atoi(doc.String())
+	if err != nil {
 		return "", ErrInvalidDocument
 	}
 

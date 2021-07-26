@@ -13,11 +13,12 @@ import (
 func Test_Deposit(t *testing.T) {
 	ctx := context.Background()
 	testTable := []struct {
-		Name          string
-		AccID         vos.AccountID
-		Amount        vos.Money
-		Setup         func() (vos.AccountID, error)
-		ExpectedError error
+		Name            string
+		AccID           vos.AccountID
+		Amount          vos.Money
+		Setup           func() (vos.AccountID, error)
+		ExpectedError   error
+		ExpectedBalance vos.Money
 	}{
 		{
 			Name:          "expected invalid amount",
@@ -36,7 +37,8 @@ func Test_Deposit(t *testing.T) {
 			Setup: func() (vos.AccountID, error) {
 				return testEnv.App.Accounts.CreateAccount(ctx, "123", 0)
 			},
-			Amount: 10,
+			Amount:          10,
+			ExpectedBalance: 10,
 		},
 	}
 
@@ -56,6 +58,14 @@ func Test_Deposit(t *testing.T) {
 
 			// assert
 			assert.ErrorIs(t, tt.ExpectedError, err)
+
+			if err != nil {
+				return
+			}
+
+			acc, err := testEnv.App.Accounts.GetAccountByID(ctx, tt.AccID)
+			require.NoError(t, err)
+			assert.Equal(t, tt.ExpectedBalance, acc.Balance)
 		})
 	}
 }
@@ -63,11 +73,12 @@ func Test_Deposit(t *testing.T) {
 func Test_Withdraw(t *testing.T) {
 	ctx := context.Background()
 	testTable := []struct {
-		Name          string
-		AccID         vos.AccountID
-		Amount        vos.Money
-		Setup         func(t *testing.T) vos.AccountID
-		ExpectedError error
+		Name            string
+		AccID           vos.AccountID
+		Amount          vos.Money
+		Setup           func(t *testing.T) vos.AccountID
+		ExpectedError   error
+		ExpectedBalance vos.Money
 	}{
 		{
 			Name:          "expected invalid amount",
@@ -103,7 +114,22 @@ func Test_Withdraw(t *testing.T) {
 
 				return accID
 			},
-			Amount: 10,
+			Amount:          10,
+			ExpectedBalance: 0,
+		},
+		{
+			Name: "withdraw happy path rich",
+			Setup: func(t *testing.T) vos.AccountID {
+				accID, err := testEnv.App.Accounts.CreateAccount(ctx, "123", 0)
+				require.NoError(t, err)
+
+				err = testEnv.App.Accounts.Deposit(ctx, accID, 200000000)
+				require.NoError(t, err)
+
+				return accID
+			},
+			Amount:          10,
+			ExpectedBalance: 199999990,
 		},
 	}
 
@@ -121,6 +147,14 @@ func Test_Withdraw(t *testing.T) {
 
 			// assert
 			assert.ErrorIs(t, tt.ExpectedError, err)
+
+			if err != nil {
+				return
+			}
+
+			acc, err := testEnv.App.Accounts.GetAccountByID(ctx, tt.AccID)
+			require.NoError(t, err)
+			assert.Equal(t, tt.ExpectedBalance, acc.Balance)
 		})
 	}
 }
@@ -128,11 +162,12 @@ func Test_Withdraw(t *testing.T) {
 func Test_Credit(t *testing.T) {
 	ctx := context.Background()
 	testTable := []struct {
-		Name          string
-		AccID         vos.AccountID
-		Amount        vos.Money
-		Setup         func() (vos.AccountID, error)
-		ExpectedError error
+		Name                    string
+		AccID                   vos.AccountID
+		Amount                  vos.Money
+		Setup                   func() (vos.AccountID, error)
+		ExpectedError           error
+		ExpectedAvailableCredit vos.Money
 	}{
 		{
 			Name:          "expected invalid amount",
@@ -151,15 +186,24 @@ func Test_Credit(t *testing.T) {
 			Setup: func() (vos.AccountID, error) {
 				return testEnv.App.Accounts.CreateAccount(ctx, "123", 10)
 			},
-			Amount:        11,
-			ExpectedError: accounts.ErrInsufficientCredit,
+			Amount:                  11,
+			ExpectedError:           accounts.ErrInsufficientCredit,
+			ExpectedAvailableCredit: 10,
 		},
 		{
-			Name: "deposit happy path",
+			Name: "credit happy path",
 			Setup: func() (vos.AccountID, error) {
 				return testEnv.App.Accounts.CreateAccount(ctx, "123", 10)
 			},
 			Amount: 10,
+		},
+		{
+			Name: "credit happy path rich",
+			Setup: func() (vos.AccountID, error) {
+				return testEnv.App.Accounts.CreateAccount(ctx, "123", 999999990)
+			},
+			Amount:                  70,
+			ExpectedAvailableCredit: 999999920,
 		},
 	}
 
@@ -179,6 +223,14 @@ func Test_Credit(t *testing.T) {
 
 			// assert
 			assert.ErrorIs(t, tt.ExpectedError, err)
+
+			if err != nil {
+				return
+			}
+
+			acc, err := testEnv.App.Accounts.GetAccountByID(ctx, tt.AccID)
+			require.NoError(t, err)
+			assert.Equal(t, tt.ExpectedAvailableCredit, acc.AvailableCredit)
 		})
 	}
 }

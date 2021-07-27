@@ -13,7 +13,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:3000",
+    "host": "localhost:3001",
     "basePath": "/api/v1",
     "paths": {
         "/accounts": {

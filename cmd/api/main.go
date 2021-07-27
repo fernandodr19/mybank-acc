@@ -21,7 +21,7 @@ import (
 
 // @title Swagger Mybank API
 // @version 1.0
-// @host localhost:3000
+// @host localhost:3001
 // @basePath /api/v1
 // @schemes http
 // @license.name MIT

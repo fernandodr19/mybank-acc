@@ -31,7 +31,7 @@ definitions:
       updated_at:
         type: string
     type: object
-host: localhost:3000
+host: localhost:3001
 info:
   contact: {}
   description: Documentation Mybank API
